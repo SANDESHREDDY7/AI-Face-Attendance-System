@@ -1,0 +1,18 @@
+.DS_Store
+# Virtual Environment
+venv/
+
+# Environment Variables
+.env
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Uploaded Images
+uploads/students/*
+uploads/attendance/*
+
+# Keep the folders, ignore their contents
+!uploads/students/.gitkeep
+!uploads/attendance/.gitkeep
