@@ -1,22 +1,26 @@
 FROM python:3.11-slim
+
 WORKDIR /app
 
+# System dependencies
 RUN apt-get update && apt-get install -y \
     git \
     build-essential \
     cmake \
     libopenblas-dev \
     liblapack-dev \
-    libx11-dev \
-    libgtk-3-dev \
-    libboost-all-dev \
+    libgl1 \
+    libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 
-RUN pip install --upgrade pip setuptools wheel
+# Install a setuptools version that still includes pkg_resources
+RUN python -m pip install --upgrade pip
+RUN python -m pip install setuptools==80.9.0 wheel
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python packages
+RUN python -m pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
