@@ -4,7 +4,7 @@ import face_recognition
 from face.detector import FaceDetector
 from students.service import StudentService
 
-MATCH_THRESHOLD = 0.45
+MATCH_THRESHOLD = 0.46
 
 
 class FaceRecognizer:
@@ -90,13 +90,19 @@ class FaceRecognizer:
             else:
 
                 print("❌ UNKNOWN")
+                print(f"Best distance: {best_distance:.4f}")
+                print(
+                    f"Best student: "
+                    f"{best_student['student_name'] if best_student else None}"
+                )
 
                 attendance.append(
                     {
                         "location": location,
                         "student": None,
-                        "distance": None,
-                        "confidence": 0
+                        "distance": best_distance,
+                        "confidence": round((1 - best_distance) * 100, 2)
+                        if best_distance < 1.0 else 0
                     }
                 )
 
