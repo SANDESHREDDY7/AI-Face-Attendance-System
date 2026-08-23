@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from attendance.repository import AttendanceRepository
 from students.service import StudentService
@@ -9,7 +10,8 @@ class AttendanceService:
     @staticmethod
     def mark_attendance(student_id, confidence):
 
-        now = datetime.now()
+        # Use India Standard Time (IST)
+        now = datetime.now(ZoneInfo("Asia/Kolkata"))
 
         record = {
             "student_id": student_id,
