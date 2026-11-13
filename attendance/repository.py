@@ -1,6 +1,14 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from database.supabase_client import supabase
+
+
+def get_today_date():
+    try:
+        return datetime.now(ZoneInfo("Asia/Kolkata")).date().isoformat()
+    except Exception:
+        return datetime.now().date().isoformat()
 
 
 class AttendanceRepository:
@@ -8,7 +16,7 @@ class AttendanceRepository:
     @staticmethod
     def attendance_exists(student_id):
 
-        today = datetime.now().date().isoformat()
+        today = get_today_date()
 
         response = (
             supabase.table("attendance_records")
@@ -48,7 +56,7 @@ class AttendanceRepository:
     @staticmethod
     def get_today_attendance():
 
-        today = datetime.now().date().isoformat()
+        today = get_today_date()
 
         return (
             supabase.table("attendance_records")
@@ -67,23 +75,25 @@ class AttendanceRepository:
                 """
             )
             .eq("attendance_date", today)
-            .order("attendance_time")
+            .order("attendance_time", desc=True)
             .execute()
         )
 
     @staticmethod
     def get_total_present_today():
 
-        today = datetime.now().date().isoformat()
+        today = get_today_date()
 
         response = (
             supabase.table("attendance_records")
-            .select("id")
+            .select("student_id")
             .eq("attendance_date", today)
             .execute()
         )
 
-        return len(response.data)
+        records = response.data or []
+        unique_student_ids = set(r["student_id"] for r in records if r.get("student_id") is not None)
+        return len(unique_student_ids)
 
     @staticmethod
     def get_all_records():
