@@ -9,9 +9,13 @@ venv/
 __pycache__/
 *.pyc
 
+# Database
+*.db
+
 # Uploaded Images
 uploads/students/*
 uploads/attendance/*
+uploads/group_photo.jpg
 
 # Keep the folders, ignore their contents
 !uploads/students/.gitkeep
