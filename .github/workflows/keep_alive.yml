@@ -1,0 +1,26 @@
+name: Keep Production Alive
+
+on:
+  schedule:
+    # Runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub anytime
+
+jobs:
+  keep-alive:
+    name: Ping Backend & Database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Production API
+        run: |
+          echo "Pinging production backend to keep Supabase & Railway active..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://ai-face-attendance-system-production-fc28.up.railway.app/attendance/stats")
+          echo "HTTP Status Code: $STATUS"
+          if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 400 ]; then
+            echo "Production is active and healthy!"
+          else
+            echo "Endpoint returned status $STATUS - Retrying once after wake-up..."
+            sleep 5
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://ai-face-attendance-system-production-fc28.up.railway.app/attendance/stats")
+            echo "Retry HTTP Status Code: $STATUS"
+          fi
