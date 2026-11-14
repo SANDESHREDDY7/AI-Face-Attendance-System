@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from students.service import StudentService
@@ -91,16 +92,20 @@ async def register_face(
 
         return {
             "success": True,
-            "message": f"{total_faces} face encodings generated successfully.",
+            "message": f"{total_faces} face encoding(s) generated successfully.",
             "faces_registered": total_faces
         }
 
     except Exception as e:
-
-        return {
-            "success": False,
-            "message": str(e)
-        }
+        import traceback
+        traceback.print_exc()
+        return JSONResponse(
+            status_code=400,
+            content={
+                "success": False,
+                "message": str(e)
+            }
+        )
 
 
 # ----------------------------------------------------

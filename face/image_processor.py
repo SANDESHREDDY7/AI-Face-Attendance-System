@@ -1,5 +1,5 @@
 import os
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 class ImageProcessor:
@@ -27,11 +27,17 @@ class ImageProcessor:
 
             image = Image.open(uploaded_file.file)
 
+            # Auto-rotate based on mobile phone EXIF orientation
+            image = ImageOps.exif_transpose(image)
+
             # Convert to RGB (required for JPEG)
             if image.mode != "RGB":
                 image = image.convert("RGB")
 
-            image.save(filepath, "JPEG", quality=95)
+            # Downsample if image is excessively large to prevent memory crashes
+            image.thumbnail((1200, 1200), Image.Resampling.LANCZOS)
+
+            image.save(filepath, "JPEG", quality=90)
 
             saved_paths.append(filepath)
 
@@ -54,10 +60,16 @@ class ImageProcessor:
 
         image = Image.open(uploaded_file.file)
 
+        # Auto-rotate based on mobile phone EXIF orientation
+        image = ImageOps.exif_transpose(image)
+
         # Convert to RGB (required for JPEG)
         if image.mode != "RGB":
             image = image.convert("RGB")
 
-        image.save(filepath, "JPEG", quality=95)
+        # Downsample if ultra high-res (e.g. 48MP phone photos) to protect memory
+        image.thumbnail((1600, 1600), Image.Resampling.LANCZOS)
+
+        image.save(filepath, "JPEG", quality=90)
 
         return filepath

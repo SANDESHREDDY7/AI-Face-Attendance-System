@@ -25,6 +25,12 @@ class FaceService:
 
         print("Encodings Generated:", len(encodings))
 
+        if len(encodings) == 0:
+            raise ValueError(
+                "No clear face could be detected in the uploaded photos. "
+                "Please ensure the student's face is clearly visible, well-lit, and not cropped out."
+            )
+
         # Save Encodings to Database
         for index, encoding in enumerate(encodings, start=1):
 
